@@ -5,13 +5,12 @@ from src.database import SessionLocal
 from src.models import Product, PriceHistory
 from src.scrapers.factory import get_scraper
 
-# Configure logger
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("logs/tracker.log"), # Save logs to file
-        logging.StreamHandler()                  # Show logs in console
+        logging.FileHandler("logs/tracker.log"),
+        logging.StreamHandler()
     ]
 )
 logger = logging.getLogger(__name__)
@@ -22,7 +21,6 @@ def add_product(url: str, target_price: float = None) -> Product:
     db: Session = SessionLocal()
     try:
         scraper = get_scraper(url)
-        # Scrapes initial data
         logger.info(f"Scraping initial data for: {url}")
         name = scraper.extract_name()
         current_price = scraper.extract_price()
@@ -30,7 +28,6 @@ def add_product(url: str, target_price: float = None) -> Product:
         if name == "Unknown Product" or current_price == 0.0:
             logger.warning("Could not extract valid data. Check URL or Scraper.")
         
-        # Creates product record
         new_product = Product(
             name=name,
             url=url,
@@ -40,7 +37,7 @@ def add_product(url: str, target_price: float = None) -> Product:
         db.commit() # To get the ID
         db.refresh(new_product)
         
-        # Create initial price history record
+        # Create initial price history
         if current_price > 0:
             price_entry = PriceHistory(
                 product_id=new_product.id,
@@ -72,7 +69,6 @@ def track_prices():
                 price = scraper.extract_price()
                 
                 if price > 0:
-                    # Save new price point
                     new_history = PriceHistory(
                         product_id=product.id,
                         price=price,

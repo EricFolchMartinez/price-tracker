@@ -8,7 +8,7 @@ TEST_DATA_DIR = Path(__file__).parent / "test_data"
 
 @pytest.fixture
 
-#Reads HTML to simulate Amazon's response
+# Reads HTML to simulate Amazon's response
 def mock_amazon_html():
     html_path = TEST_DATA_DIR / "amazon_product.html"
     if not html_path.exists():
@@ -16,7 +16,7 @@ def mock_amazon_html():
     with open(html_path, "r", encoding="utf-8") as f:
         return f.read()
 
-# Mocking and returns the HTML
+# Returns the HTML
 def test_amazon_extraction(mock_amazon_html):
     with patch("requests.get") as mock_get:
         mock_response = MagicMock()

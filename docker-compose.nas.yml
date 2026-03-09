@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  price-tracker:
+    image: tusker05/price-tracker:latest
+    container_name: price_tracker_pro
+    restart: unless-stopped
+    ports:
+      - "8501:8501"  # Dashboard Web
+      - "8000:8000"  # API Mòbil
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - TZ=Europe/Madrid

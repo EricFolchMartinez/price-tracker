@@ -4,7 +4,6 @@ import threading
 import logging
 from src.tracker import track_prices
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Scheduler")
 
@@ -12,7 +11,7 @@ logger = logging.getLogger("Scheduler")
 def run_scheduler():
     logger.info("Scheduler started. Waiting for first cycle...")
     
-    # Wait for API and DB start properly
+    # Wait for API
     time.sleep(60) 
     
     while True:
@@ -22,7 +21,6 @@ def run_scheduler():
         except Exception as e:
             logger.error(f"Error in scheduled tracking: {e}")
         
-        # Update interval
         wait_seconds = 21600 
         logger.info(f"💤 Sleeping for {wait_seconds} seconds (6 hours)...")
         time.sleep(wait_seconds)
@@ -41,14 +39,13 @@ dashboard_command = [
 
 print("Starting Price Tracker Ecosystem...")
 
-# External processes start
 api_process = subprocess.Popen(api_command)
 dashboard_process = subprocess.Popen(dashboard_command)
 
 scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
 scheduler_thread.start()
 
-# Script keeps running while any processes is alive
+# Keeps runing while process is alive
 try:
     api_process.wait()
     dashboard_process.wait()

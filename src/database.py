@@ -11,10 +11,9 @@ engine = create_engine(
 # Creates sessions for using the database
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# All tables will inherit from this class
 Base = declarative_base()
 
-# Generator function to get a database session.
+# Get db sesion
 def get_db():
     db = SessionLocal()
     try:

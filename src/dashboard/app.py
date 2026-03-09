@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from src.database import SessionLocal
 from src.models import Product, PriceHistory
 
-# Path configuration
 st.set_page_config(page_title="Price Tracker Pro", layout="wide")
 root_path = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(root_path))
@@ -22,7 +21,7 @@ def get_data():
     for p in products:
         latest_price = p.prices[-1].price if p.prices else 0.0
         
-        # Save basic information in tables
+        # Add product information to db
         data.append({
             "ID": p.id,
             "Name": p.name,
@@ -33,7 +32,6 @@ def get_data():
     db.close()
     return pd.DataFrame(data)
 
-# Fetches price history for especific products
 def get_history(product_id):
     db: Session = SessionLocal()
     history = db.query(PriceHistory).filter(PriceHistory.product_id == product_id).all()
@@ -44,12 +42,11 @@ def get_history(product_id):
         "Price": h.price
     } for h in history])
 
-# Interface
 
 st.title("Price Tracker")
 st.markdown("Monitorització de preus en temps real per a Amazon.")
 
-# Global variables
+# Variables
 df_products = get_data()
 col1, col2, col3 = st.columns(3)
 col1.metric("Productes Rastrejats", len(df_products))
@@ -58,11 +55,8 @@ if not df_products.empty:
     col2.metric("Preu Mitjà", f"{avg_price:.2f} €")
 
 st.divider()
-
-# Principal tablel
 st.subheader("Els teus Productes")
 if not df_products.empty:
-    # It has to be interactive
     st.dataframe(
         df_products, 
         column_config={
@@ -74,7 +68,7 @@ if not df_products.empty:
 else:
     st.info("Encara no has afegit cap producte. Fes servir el terminal o la barra lateral.")
 
-# Makes a graphic
+# Graphics
 st.divider()
 st.subheader("Evolució de Preus")
 
@@ -92,7 +86,7 @@ if not df_products.empty:
         fig.update_layout(yaxis_title="Preu (€)", xaxis_title="Data")
         st.plotly_chart(fig, use_container_width=True)
         
-        # Visual alerts for better prices
+        # Alert if there is a better price
         current_price = selected_row["Current Price"]
         target_price = selected_row["Target Price"]
         
