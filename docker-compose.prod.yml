@@ -17,7 +17,7 @@ services:
     ports:
       # Bound to localhost ONLY. Cloudflare Tunnel reaches the dashboard here.
       - "127.0.0.1:8081:8501"   # Streamlit dashboard  -> pricetracker.ericfolch.com
-      - "127.0.0.1:8082:8000"   # FastAPI (internal, no Cloudflare route)
+      - "127.0.0.1:8083:8000"   # FastAPI (internal, no Cloudflare route; 8082 was taken)
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs

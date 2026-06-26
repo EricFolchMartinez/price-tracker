@@ -8,7 +8,7 @@ behind Cloudflare Tunnel.
 
 ```
 Internet ─HTTPS─> Cloudflare Tunnel "homelab" ─> 127.0.0.1:8081 ─> container Streamlit :8501  (PUBLIC, read-only)
-                                                 127.0.0.1:8082 ─> container FastAPI   :8000  (localhost only, no CF route)
+                                                 127.0.0.1:8083 ─> container FastAPI   :8000  (localhost only, no CF route)
                                                                    SQLite /app/data/prices.sqlite (own volume, seeded)
                                                                    Scraper scheduler: DISABLED
 ```
@@ -16,7 +16,7 @@ Internet ─HTTPS─> Cloudflare Tunnel "homelab" ─> 127.0.0.1:8081 ─> conta
 - Single container, entrypoint `src/run_services.py`, driven by env vars.
 - `RUN_SCHEDULER=false`: no scraping from the Pi (no IP-ban / ToS / cost risk).
 - `ENVIRONMENT=production`: FastAPI hides `/docs`, `/redoc`, `/openapi.json`.
-- Ports bound to `127.0.0.1` only. Port 8082 is used because 8000 is reserved by CertiShot.
+- Ports bound to `127.0.0.1` only. The API uses 8083 (8000 is reserved by CertiShot, 8082 was already in use).
 
 ## One-time setup on the Pi
 
@@ -73,6 +73,6 @@ docker compose -f docker-compose.prod.yml up -d --build
 ## Notes
 
 - The FastAPI service is intentionally **not** exposed through Cloudflare. It runs
-  on `127.0.0.1:8082` for local use only. Do not add a Cloudflare route for it
+  on `127.0.0.1:8083` for local use only. Do not add a Cloudflare route for it
   unless you add rate limiting / auth first (its `POST /products` triggers scraping).
 - The database lives in `./data` (git-ignored). Back it up by copying `data/prices.sqlite`.
