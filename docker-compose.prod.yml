@@ -1,0 +1,23 @@
+services:
+  price-tracker:
+    build: .
+    image: price-tracker:prod
+    container_name: price_tracker_pro
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      - TZ=Europe/Madrid
+      - ENVIRONMENT=production
+      # Public, read-only demo: dashboard on, scraping scheduler off.
+      - RUN_DASHBOARD=true
+      - RUN_API=true
+      - RUN_SCHEDULER=false
+      - DEMO_MODE=true
+    ports:
+      # Bound to localhost ONLY. Cloudflare Tunnel reaches the dashboard here.
+      - "127.0.0.1:8081:8501"   # Streamlit dashboard  -> pricetracker.ericfolch.com
+      - "127.0.0.1:8082:8000"   # FastAPI (internal, no Cloudflare route)
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs

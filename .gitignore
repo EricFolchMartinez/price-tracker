@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 venv/
 .env
+.env.prod
+.env.*
+!.env.example
+!.env.prod.example
 
 # Database
 *.sqlite3

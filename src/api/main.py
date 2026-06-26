@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -6,11 +8,18 @@ from src.database import get_db
 from src.models import Product, PriceHistory
 from src.tracker import add_product
 
+# In production we hide the interactive API docs and the OpenAPI schema.
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development").strip().lower()
+_IS_PROD = ENVIRONMENT == "production"
+
 # Initialize api
 app = FastAPI(
     title="Price Tracker API",
     description="Backend API for Mobile App connection",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url=None if _IS_PROD else "/docs",
+    redoc_url=None if _IS_PROD else "/redoc",
+    openapi_url=None if _IS_PROD else "/openapi.json",
 )
 
 # Data format
